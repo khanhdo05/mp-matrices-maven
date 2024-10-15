@@ -19,8 +19,11 @@ public class MatrixV0<T> implements Matrix<T> {
   /** The height of the matrix. */
   int height;
 
-  /** The default value to fill */
+  /** The default value to fill. */
   T def;
+
+  /** The 2-D matrix we store. */
+  T[][] matrix;
 
   // +--------------+------------------------------------------------
   // | Constructors |
@@ -35,14 +38,24 @@ public class MatrixV0<T> implements Matrix<T> {
    *
    * @throws NegativeArraySizeException If either the width or height are negative.
    */
+  @SuppressWarnings("unchecked")
   public MatrixV0(int width, int height, T def) throws NegativeArraySizeException {
     if (width <= 0 || height <= 0) {
       throw new NegativeArraySizeException("Invalid width or height");
     } // if
 
+    // Initialize fields
     this.width = width;
     this.height = height;
     this.def = def;
+    this.matrix = (T[][]) new Object[height][width];
+
+    // A nested for loop to fill the matrix with the default value.
+    for (int i = 0; i < this.height; i++) {
+      for (int j = 0; j < this.width; j++) {
+        this.matrix[i][j] = def;
+      } // for
+    } // for
   } // MatrixV0(int, int, T)
 
   /**
