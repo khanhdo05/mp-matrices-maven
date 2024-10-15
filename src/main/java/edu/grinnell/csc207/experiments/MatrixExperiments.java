@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 /**
  * Some experiments with matrices.
  *
- * @author Your Name Here
+ * @author Khanh Do - CSC-207-02
  * @author Samuel A. Rebelsky
  */
 public class MatrixExperiments {
