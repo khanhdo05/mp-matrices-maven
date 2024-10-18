@@ -198,23 +198,18 @@ public class MatrixV0<T> implements Matrix<T> {
       throw new IndexOutOfBoundsException("Error: invalid column.");
     } // if
 
-    T[][] newMatrix = (T[][]) new Object[this.height()][this.width() + 1];
-
     for (int row = 0; row < this.height(); row++) {
-      for (int c = 0; c <= this.width(); c++) {
-        // if the row is the row to insert, fill with the default value, otherwise copy the value
-        if (c == col) {
-          newMatrix[row][c] = this.def;
-        } else if (c < col) {
-          newMatrix[row][c] = this.get(row, col);
-        } else {
-          newMatrix[row][c] = this.get(row, col + 1);
-        } // if/else
-      } // for
-    } // for
+      T[] temp = (T[]) new Object[this.width() + 1];
 
+      System.arraycopy(this.matrix[row], 0, temp, 0, col);
+
+      temp[col] = this.def;
+
+      System.arraycopy(this.matrix[row], col, temp, col + 1, this.width - col);
+
+      this.matrix[row] = temp;
+    } // for
     this.width++;
-    this.matrix = newMatrix;
   } // insertCol(int)
 
   /**
@@ -236,6 +231,11 @@ public class MatrixV0<T> implements Matrix<T> {
       throw new ArraySizeException("Error: invalid size of vals.");
     } // if
 
+    this.insertCol(col);
+
+    for (int row = 0; row < this.height(); row++) {
+      this.matrix[row][col] = vals[row];
+    } // for
   } // insertCol(int, T[])
 
   /**
@@ -300,8 +300,18 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException If the rows or columns are inappropriate.
    */
   @Override
-  public void fillRegion(int startRow, int startCol, int endRow, int endCol, T val) {
-    // STUB
+  public void fillRegion(int startRow, int startCol, int endRow, int endCol, T val)
+      throws IndexOutOfBoundsException {
+    if (startRow < 0 || startCol < 0 || endRow > this.height() || endCol > this.width()) {
+      throw new IndexOutOfBoundsException("Error: Rows or cols are inappropriate: " + startRow
+          + ", " + startCol + ", " + endRow + ", " + endCol);
+    } // if
+
+    for (int row = startRow; row < endRow; row++) {
+      for (int col = startCol; col < endCol; col++) {
+        this.matrix[row][col] = val;
+      } // for
+    } // for
   } // fillRegion(int, int, int, int, T)
 
   /**
@@ -320,9 +330,21 @@ public class MatrixV0<T> implements Matrix<T> {
    *
    * @throws IndexOutOfBoundsException If the rows or columns are inappropriate.
    */
+  @Override
   public void fillLine(int startRow, int startCol, int deltaRow, int deltaCol, int endRow,
       int endCol, T val) {
+    if (startRow < 0 || startCol < 0 || endRow > this.height() || endCol > this.width()) {
+      throw new IndexOutOfBoundsException("Error: Rows or columns are inappropriate.");
+    } // if
 
+    int row = startRow;
+    int col = startCol;
+
+    while (row < endRow && col < endCol) {
+      this.matrix[row][col] = val;
+      row += deltaRow;
+      col += deltaCol;
+    } // while
   } // fillLine(int, int, int, int, int, int, T)
 
   /**
@@ -361,9 +383,15 @@ public class MatrixV0<T> implements Matrix<T> {
         // a nested look to compare each element of the matrix
         for (int row = 0; row < this.height(); row++) {
           for (int col = 0; col < this.width(); col++) {
-            if (!this.get(row, col).equals(otherMatrix.get(row, col))) {
-              return false;
-            } // if
+            try {
+              if (!this.get(row, col).equals(otherMatrix.get(row, col))) {
+                return false;
+              } // if
+            } catch (IndexOutOfBoundsException e) {
+              if (this.matrix[row][col] == null && otherMatrix.get(row, col) != null) {
+                return false;
+              } // if
+            } // try/catch
           } // for col
         } // for row
         return true;

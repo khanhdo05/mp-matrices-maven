@@ -1,10 +1,10 @@
 package edu.grinnell.csc207.experiments;
 
+import java.io.PrintWriter;
+
 import edu.grinnell.csc207.util.ArraySizeException;
 import edu.grinnell.csc207.util.Matrix;
 import edu.grinnell.csc207.util.MatrixV0;
-
-import java.io.PrintWriter;
 
 /**
  * Some experiments with matrices.
@@ -28,6 +28,7 @@ public class MatrixExperiments {
    * @param matrix
    *   The matrix to print.
    */
+  @SuppressWarnings("unchecked")
   static void figure(PrintWriter pen, String caption, Matrix matrix) {
     pen.println("=".repeat(80));
     pen.println();
@@ -48,7 +49,7 @@ public class MatrixExperiments {
    *   The pen used to print out the results.
    */
   static void assignmentSample(PrintWriter pen) {
-    Matrix<String> sample = new MatrixV0<String>(5, 6, "O");
+    Matrix<String> sample = new MatrixV0<>(5, 6, "O");
     for (int row = 0; row < 6; row++) {
       for (int col = 0; col < 5; col++) {
         sample.set(row, col, "X");
