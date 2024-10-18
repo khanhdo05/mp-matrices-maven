@@ -145,24 +145,20 @@ public class MatrixV0<T> implements Matrix<T> {
       throw new IndexOutOfBoundsException("Error: invalid row.");
     } // if
 
-    this.height = this.height() + 1;
+    T[][] newMatrix = (T[][]) new Object[this.height() + 1][this.width()];
 
-    T[][] newMatrix = (T[][]) new Object[this.height()][this.width()];
+    System.arraycopy(this.matrix, 0, newMatrix, 0, row);
 
-    for (int r = 0; r < this.height() - 1; r++) {
-      for (int col = 0; col < this.width(); col++) {
-        // if the row is the row to insert, fill with the default value, otherwise copy the value
-        if (r == row) {
-          newMatrix[r][col] = this.def;
-        } else if (r < row) {
-          newMatrix[r][col] = this.get(r, col);
-        } else {
-          newMatrix[r + 1][col] = this.get(r, col);
-        }
-      } // for
+    newMatrix[row] = (T[]) new Object[this.width()];
+
+    for (int col = 0; col < this.width(); col++) {
+      newMatrix[row][col] = this.def;
     } // for
 
+    System.arraycopy(this.matrix, row, newMatrix, row + 1, this.height() - row);
+
     this.matrix = newMatrix;
+    this.height++;
   } // insertRow(int)
 
   /**
@@ -184,6 +180,8 @@ public class MatrixV0<T> implements Matrix<T> {
       throw new ArraySizeException("Error: invalid size of vals.");
     } // if
 
+    this.insertRow(row);
+    System.arraycopy(vals, 0, this.matrix[row], 0, this.width());
   } // insertRow(int, T[])
 
   /**
@@ -200,12 +198,10 @@ public class MatrixV0<T> implements Matrix<T> {
       throw new IndexOutOfBoundsException("Error: invalid column.");
     } // if
 
-    this.width = this.width() + 1;
-
-    T[][] newMatrix = (T[][]) new Object[this.height()][this.width()];
+    T[][] newMatrix = (T[][]) new Object[this.height()][this.width() + 1];
 
     for (int row = 0; row < this.height(); row++) {
-      for (int c = 0; c < this.width(); c++) {
+      for (int c = 0; c <= this.width(); c++) {
         // if the row is the row to insert, fill with the default value, otherwise copy the value
         if (c == col) {
           newMatrix[row][c] = this.def;
@@ -217,6 +213,7 @@ public class MatrixV0<T> implements Matrix<T> {
       } // for
     } // for
 
+    this.width++;
     this.matrix = newMatrix;
   } // insertCol(int)
 
@@ -300,7 +297,7 @@ public class MatrixV0<T> implements Matrix<T> {
    * @param endCol The right edge / column to stop with (exclusive).
    * @param val The value to store.
    *
-   * @throw IndexOutOfBoundsException If the rows or columns are inappropriate.
+   * @throws IndexOutOfBoundsException If the rows or columns are inappropriate.
    */
   @Override
   public void fillRegion(int startRow, int startCol, int endRow, int endCol, T val) {
@@ -308,7 +305,10 @@ public class MatrixV0<T> implements Matrix<T> {
   } // fillRegion(int, int, int, int, T)
 
   /**
-   * Fill a line (horizontal, vertical, diagonal).
+   * Fill a line (horizontal, vertical, diagonal). Fill the elements at (startRow, startCol),
+   * (startRow + deltaRow, startCol + deltaCol), (startRow + 2 * deltaRow, startCol + 2 * deltaCol),
+   * … with val. Stop when the current row or column equals or exceeds endRow or endCol,
+   * repectively.
    *
    * @param startRow The row to start with (inclusive).
    * @param startCol The column to start with (inclusive).
@@ -318,11 +318,11 @@ public class MatrixV0<T> implements Matrix<T> {
    * @param endCol The column to stop with (exclusive).
    * @param val The value to store.
    *
-   * @throw IndexOutOfBoundsException If the rows or columns are inappropriate.
+   * @throws IndexOutOfBoundsException If the rows or columns are inappropriate.
    */
   public void fillLine(int startRow, int startCol, int deltaRow, int deltaCol, int endRow,
       int endCol, T val) {
-    // STUB
+
   } // fillLine(int, int, int, int, int, int, T)
 
   /**
@@ -333,7 +333,7 @@ public class MatrixV0<T> implements Matrix<T> {
    */
   @Override
   public Matrix<T> clone() {
-    Matrix<T> copy = new MatrixV0<T>(this.width(), this.height(), this.def);
+    Matrix<T> copy = new MatrixV0<>(this.width(), this.height(), this.def);
 
     for (int row = 0; row < this.height(); row++) {
       for (int col = 0; col < this.width(); col++) {
