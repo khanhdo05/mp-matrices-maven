@@ -24,14 +24,14 @@ class TestMatrix {
     Integer five = Integer.valueOf(5);
     Integer six = Integer.valueOf(6);
 
-    Matrix<Integer> oneByOneA = new MatrixV0<Integer>(1, 1);
+    Matrix<Integer> oneByOneA = new MatrixV0<>(1, 1);
     assertMatrixEquals(new Integer[][] {{null}}, oneByOneA,
         "one-by-one of null");
     oneByOneA.set(0, 0, five);
     assertMatrixEquals(new Integer[][] {{five}}, oneByOneA,
         "after setting one-by-one to five");
 
-    Matrix<String> oneByOneB = new MatrixV0<String>(1, 1);
+    Matrix<String> oneByOneB = new MatrixV0<>(1, 1);
     assertMatrixEquals(new String[][] {{null}}, oneByOneB,
         "one-by-one of null");
     oneByOneB.set(0, 0, "hi");
@@ -65,7 +65,7 @@ class TestMatrix {
     Integer i4 = Integer.valueOf(4);
     Integer i5 = Integer.valueOf(5);
 
-    Matrix<Integer> horizA = new MatrixV0<Integer>(5, 1);
+    Matrix<Integer> horizA = new MatrixV0<>(5, 1);
     assertMatrixEquals(new Integer[][] {{null, null, null, null, null}}, horizA,
         "R: 5x1 matrix of null");
     horizA.set(0, 0, i0);
